@@ -30,7 +30,7 @@ const productSchema = new mongoose.Schema({
         type: String,
         required: [true, 'Please select category for this product'],
         enum: {
-            values: ['Laptops', 'Headphones', 'Books', 'Sports', 'Outdoor', 'Home', 'Cameras'],
+            values: ['Laptops', "Electronics", "Accessories", "Food", 'Headphones', 'Books', 'Sports', 'Outdoor', 'Home', 'Cameras'],
             message: 'Please select correct category'
         }
     },
@@ -51,7 +51,7 @@ const productSchema = new mongoose.Schema({
         user: {
             type: mongoose.Schema.ObjectId,
             ref: 'User',
-            required: true
+            required: false
         },
         rating: {
             type: Number,
@@ -65,7 +65,7 @@ const productSchema = new mongoose.Schema({
     user: {
         type: mongoose.Schema.ObjectId,
         ref: 'User',
-        required: true
+        required: false
     }
 }, { timestamps: true });
 

@@ -3,12 +3,13 @@ const app = express()
 const dotenv = require("dotenv")
 dotenv.config({ path: "backend/config/config.env" })
 const productRoutes = require("./Routes/ProductRoutes")
-const  dbConnection  = require("./config/database");
+const dbConnection = require("./config/database");
 
 
 
 
 dbConnection()
+app.use(express.json())
 app.use("/api/v1", productRoutes)
 
 
