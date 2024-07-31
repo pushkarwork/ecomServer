@@ -1,13 +1,11 @@
-import mongoose from "mongoose";
-import dotenv from "dotenv";
+const mongoose = require("mongoose");
+const dotenv = require("dotenv");
 
 // Load environment variables
 dotenv.config({ path: "backend/config/config.env" });
 
 const DB_URI = process.env.DB_Local_URi;
-
-
-export const dbConnection = () => {
+const dbConnection = () => {
     if (process.env.NODE_ENV === "PRODUCTION") {
         DB_URI = process.env.MAIN_URi
     }
@@ -24,3 +22,5 @@ export const dbConnection = () => {
             console.error("Database connection error:", error);
         });
 };
+
+module.exports = dbConnection
