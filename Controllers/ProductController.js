@@ -1,12 +1,20 @@
 const CatchAsyncErrors = require("../Middlewares/CatchAsyncErrors");
-const productSchema = require("../Models/productModel")
+const productSchema = require("../Models/productModel");
+const ApiFilters = require("../Utils/ApiFilters");
 const ErrorHandler = require("../Utils/ErrorHandler")
 
 
 //Get all products = /api/v1/getALlProducts 
 const getAllProducts = CatchAsyncErrors(async (req, res) => {
-    const products = await productSchema.find()
-    res.status(201).json(products);
+    const resPerPage = 4;
+    const api_filters = new ApiFilters(productSchema, req.query).search().filters()
+
+    let products = await api_filters.query
+    let filtered_Products_Count = products.length
+    api_filters.pagination(resPerPage)
+    products = await api_filters.query.clone()
+    // const products = await productSchema.find()
+    res.status(201).json({ resPerPage, filtered_Products_Count, products });
 })
 
 
