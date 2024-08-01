@@ -4,6 +4,7 @@ const dotenv = require("dotenv")
 dotenv.config({ path: "backend/config/config.env" })
 const productRoutes = require("./Routes/ProductRoutes")
 const dbConnection = require("./config/database");
+const UserRoutes = require("./Routes/UserRoutes")
 const ErrorMiddleware = require("./Middlewares/Errors")
 // process.on("uncaughtException", (err) => {
 //     console.log(`Error is :${err}`)
@@ -16,6 +17,7 @@ const ErrorMiddleware = require("./Middlewares/Errors")
 dbConnection()
 app.use(express.json())
 app.use("/api/v1", productRoutes)
+app.use("/api/v1", UserRoutes)
 
 app.use(ErrorMiddleware)
 // const port = 4000
