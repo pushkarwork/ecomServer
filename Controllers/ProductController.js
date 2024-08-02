@@ -20,6 +20,7 @@ const getAllProducts = CatchAsyncErrors(async (req, res) => {
 
 //create new product = /api/v1/admin/newProduct
 const createProduct = CatchAsyncErrors(async (req, res) => {
+    req.body.user = req.user._id
 
     const product = await productSchema.create(req.body)
     res.status(201).json(product);
