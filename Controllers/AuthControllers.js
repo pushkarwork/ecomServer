@@ -101,7 +101,7 @@ const forgetPassword = CatchAsyncErrors(async (req, res, next) => {
 
 
 const ResetPassword = CatchAsyncErrors(async (req, res, next) => {
-    const resetPasswordToken =  crypto.createHash('sha256').update(req.params.token).digest('hex');
+    const resetPasswordToken = crypto.createHash('sha256').update(req.params.token).digest('hex');
     // console.log(resetPassword_Token)
 
     const user = await UserModels.findOne({ resetPasswordToken, resetPasswordExpire: { $gt: Date.now() } })
@@ -122,6 +122,94 @@ const ResetPassword = CatchAsyncErrors(async (req, res, next) => {
     sendToken(user, 200, res)
 });
 
+//geT Logged IN User Profile --- api/v1/me
+
+const getUserProfile = CatchAsyncErrors(async (req, res, next) => {
+
+    const user = await UserModels.findById(req?.user?._id);
+    res.status(200).json({ user });
+
+})
+
+//update LoggedIN user password --- api/v1/password/update
+
+const updatePassword = CatchAsyncErrors(async (req, res, next) => {
+
+    const user = await UserModels.findById(req?.user?._id).select("+password");
+    const Is_Matched_Password = await user.comparePassword(req.body.oldPassword)
+    console.log(Is_Matched_Password)
+
+    if (!Is_Matched_Password) {
+        return next(new ErrorHandler("You have entered the wrong password , please check again", 400))
+    }
+
+    user.password = req.body.password;
+
+    user.save()
+
+    res.status(200).json({ success: true });
+
+})
+
+//update LoggedIN user Profile(name or email) --- api/v1/me/update
+
+const updateProfile = CatchAsyncErrors(async (req, res, next) => {
+    const updated_Data = { name: req.body.name, email: req.body.email }
+
+    const user = await UserModels.findByIdAndUpdate(req?.user?._id, updated_Data, { new: true });
+
+    res.status(200).json({ user });
+
+})
+
+//get all users ---api/v1/admin/users
+const allUsers = CatchAsyncErrors(async (req, res, next) => {
+    const users = await UserModels.find();
+
+    res.status(200).json({ users })
+})
+
+//update user profile ---api/v1/admin/getUser/:id
+const getUserDetail = CatchAsyncErrors(async (req, res, next) => {
+    const user = await UserModels.findById(req.params.id)
+
+    if (!user) {
+        return next(new ErrorHandler("User not Found", 404))
+    }
+
+    res.status(200).json({ user })
 
 
-module.exports = { createUser, loginUser, logOut, forgetPassword, ResetPassword }
+})
+
+
+//update user Profile(name or email or ROLE) --- api/v1/admin/updateuser
+
+const updateUser = CatchAsyncErrors(async (req, res, next) => {
+    const updated_Data = { name: req.body.name, email: req.body.email, role: req.body.role }
+
+    const user = await UserModels.findByIdAndUpdate(req.params.id, updated_Data, { new: true });
+
+    res.status(200).json({ user });
+
+})
+
+//delete user Profile --- api/v1/admin/delete
+
+const deleteUser = CatchAsyncErrors(async (req, res, next) => {
+
+
+    const user = await UserModels.findById(req.params.id);
+    if (!user) {
+        return next(new ErrorHandler("User not Found", 404))
+    }
+
+    await user.deleteOne()
+
+    res.status(200).json({ success: true });
+
+})
+
+
+
+module.exports = { createUser, loginUser, logOut, forgetPassword, ResetPassword, getUserProfile, updatePassword, updateProfile, allUsers, getUserDetail, updateUser, deleteUser }
