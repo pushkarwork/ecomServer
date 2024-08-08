@@ -7,6 +7,7 @@ const productRoutes = require("./Routes/ProductRoutes")
 const dbConnection = require("./config/database");
 const UserRoutes = require("./Routes/UserRoutes")
 const ErrorMiddleware = require("./Middlewares/Errors")
+const orderRoutes = require("./Routes/orderRoutes")
 // process.on("uncaughtException", (err) => {
 //     console.log(`Error is :${err}`)
 //     console.log(`Shutting Down the Server due to Unhandled Rejection in index.js`)
@@ -20,6 +21,7 @@ app.use(express.json())
 app.use(cookieParser())
 app.use("/api/v1", productRoutes)
 app.use("/api/v1", UserRoutes)
+app.use("/api/v1", orderRoutes)
 
 app.use(ErrorMiddleware)
 // const port = 4000

@@ -4,7 +4,7 @@ const { isAuthenticated_User, Authorize_Roles } = require("../Middlewares/AuthMi
 const router = express.Router()
 
 
-router.route("/getAllProducts").get(isAuthenticated_User, Authorize_Roles("admin"), getAllProducts)
+router.route("/getAllProducts").get(isAuthenticated_User, getAllProducts)
 router.route("/admin/newProduct").post(isAuthenticated_User, createProduct)
 router.route("/admin/product/:id").get(getSingleProduct).put(updateProduct).delete(deleteProduct)
 
