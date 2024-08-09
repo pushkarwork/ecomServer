@@ -61,5 +61,88 @@ const deleteProduct = CatchAsyncErrors(async (req, res) => {
     res.status(200).json({ message: "Product Deleted Successfully" });
 });
 
+//create new product Review = /api/v1/review
+const createReview = CatchAsyncErrors(async (req, res) => {
+    const { rating, comment, productId } = req.body
 
-module.exports = { getAllProducts, createProduct, getSingleProduct, updateProduct, deleteProduct };
+    const review = {
+        rating: Number(rating),
+        comment,
+        user: req.user._id
+    }
+
+    const product = await productSchema.findById(productId)
+
+    if (!product) {
+        return next(new ErrorHandler("product not found with this id ", 404))
+    }
+
+    const isReviewed = product?.reviews?.find((r) => r.user.toString() === req.user._id)
+
+    if (isReviewed) {
+        product.reviews.forEach(review => {
+            if (review.user.toString() === req.user._id.toString()) {
+                review.comment = comment;
+                review.rating = rating;
+            }
+        });
+    } else {
+        product.reviews.push(review)
+        product.numOfReviews = product.reviews.length
+    }
+
+    product.ratings = product.reviews.reduce((acc, i) => i.rating + acc, 0) / product.reviews.length
+
+    await product.save({ validateBeforeSave: false });
+
+    res.status(200).json({
+        success: true
+    })
+
+});
+
+//Get all Reviews of a Product = /api/v1/allReviews
+
+const GetReviews = CatchAsyncErrors(async (req, res, next) => {
+
+    const product = await productSchema.findById(req.query.id)
+
+    if (!product) {
+        return next(new ErrorHandler("Product not Found", 404))
+    }
+
+    const allReviews = product.reviews
+
+    res.status(200).json({
+        allReviews  // Agar frontend pe sahi se reviews na aaye to haya ya fr allReviews pe check  krna hia knki video mei object bana k bheja hai
+    })
+})
+
+//Delete a product Review = /api/v1/admin/Delete review
+const DeleteReview = CatchAsyncErrors(async (req, res) => {
+
+    let product = await productSchema.findById(req.query.productId)
+
+    if (!product) {
+        return next(new ErrorHandler("product not found with this id ", 404))
+    }
+
+    const reviews = product?.reviews?.filter((review) => review._id.toString() !== req.query.id.toString())
+
+
+    const numOfReviews = reviews.length;
+
+
+    const ratings = numOfReviews === 0 ? 0 : reviews.reduce((acc, i) => i.rating + acc, 0) / numOfReviews
+
+
+    product = await productSchema.findByIdAndUpdate(req.query.productId, { reviews, numOfReviews, ratings }, { new: true })
+    await product.save({ validateBeforeSave: false });
+
+    res.status(200).json({
+        success: true
+    })
+
+});
+
+module.exports = { getAllProducts, createProduct, getSingleProduct, updateProduct, deleteProduct, createReview, GetReviews, DeleteReview };
