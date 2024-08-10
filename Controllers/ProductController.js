@@ -5,9 +5,10 @@ const ErrorHandler = require("../Utils/ErrorHandler")
 
 
 //Get all products = /api/v1/getALlProducts 
-const getAllProducts = CatchAsyncErrors(async (req, res) => {
+const getAllProducts = CatchAsyncErrors(async (req, res, next) => {
     const resPerPage = 4;
     const api_filters = new ApiFilters(productSchema, req.query).search().filters()
+
 
     let products = await api_filters.query
     let filtered_Products_Count = products.length
@@ -35,7 +36,7 @@ const getSingleProduct = CatchAsyncErrors(async (req, res, next) => {
     if (!product) {
         return next(new ErrorHandler("Product Not Found", 404))
     }
-    res.status(200).json(product);
+    res.status(200).json({product});
 
 });
 

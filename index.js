@@ -1,5 +1,6 @@
 const express = require("express")
 const app = express()
+const cors = require('cors');
 var cookieParser = require('cookie-parser')
 const dotenv = require("dotenv")
 dotenv.config({ path: "backend/config/config.env" })
@@ -15,8 +16,16 @@ const orderRoutes = require("./Routes/orderRoutes")
 //     process.exit(1)
 // })
 
+// const corsOptions = {
+//     origin: 'http://localhost:5173/', // Replace with your client URL
+//     optionsSuccessStatus: 200,
+// };
+
+app.use(cors());
+
 // console.log(object)
 dbConnection()
+app.use(cors());
 app.use(express.json())
 app.use(cookieParser())
 app.use("/api/v1", productRoutes)
