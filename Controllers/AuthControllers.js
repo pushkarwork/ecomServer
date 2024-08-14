@@ -1,3 +1,5 @@
+const { upload_file, delete_file } = require("../Utils/clooudinary");
+
 const CatchAsyncErrors = require("../Middlewares/CatchAsyncErrors");
 const UserModels = require("../Models/UserModels");
 const getReset_Password_Template = require("../Utils/EmailTemplate");
@@ -210,6 +212,24 @@ const deleteUser = CatchAsyncErrors(async (req, res, next) => {
 
 })
 
+// Upload user avatar => /api/v1/me/upload_avatar
+const uplaodAvatar = CatchAsyncErrors(async (req, res, next) => {
+    const avatarResponse = await upload_file(req.body.avatar, "Home/shopit/avatar");
+    console.log("this is hi")
+
+    if (req.user.avatar.url) {
+        console.log("this is avaat", req.user.avatar.url)
+        await delete_file(req.user.avatar.public_id)
+    }
+
+    const user = await UserModels.findByIdAndUpdate(req?.user?._id, {
+        avatar: avatarResponse,
+    });
+    res.status(200).json({
+        user,
+    });
+});
 
 
-module.exports = { createUser, loginUser, logOut, forgetPassword, ResetPassword, getUserProfile, updatePassword, updateProfile, allUsers, getUserDetail, updateUser, deleteUser }
+
+module.exports = { createUser, loginUser, logOut, forgetPassword, ResetPassword, uplaodAvatar, getUserProfile, updatePassword, updateProfile, allUsers, getUserDetail, updateUser, deleteUser }
