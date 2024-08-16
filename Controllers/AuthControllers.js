@@ -139,15 +139,15 @@ const updatePassword = CatchAsyncErrors(async (req, res, next) => {
 
     const user = await UserModels.findById(req?.user?._id).select("+password");
     const Is_Matched_Password = await user.comparePassword(req.body.oldPassword)
-    console.log(Is_Matched_Password)
+    console.log("here",Is_Matched_Password)
 
     if (!Is_Matched_Password) {
         return next(new ErrorHandler("You have entered the wrong password , please check again", 400))
     }
 
-    user.password = req.body.password;
+    user.password = req.body.Password;
 
-    user.save()
+    await user.save()
 
     res.status(200).json({ success: true });
 
