@@ -73,7 +73,7 @@ const forgetPassword = CatchAsyncErrors(async (req, res, next) => {
     const reset_token = user.getResetPasswordToken()
     await user.save()
 
-    const Reset_Url = `${process.env.FRONTEND_URL}/api/v1/password/reset/${reset_token}`
+    const Reset_Url = `${process.env.FRONTEND_URL}/password/reset/${reset_token}`
     const message = getReset_Password_Template(user?.name, Reset_Url)
 
     try {
