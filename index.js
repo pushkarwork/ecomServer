@@ -9,6 +9,7 @@ const dbConnection = require("./config/database");
 const UserRoutes = require("./Routes/UserRoutes")
 const ErrorMiddleware = require("./Middlewares/Errors")
 const orderRoutes = require("./Routes/orderRoutes")
+const paymentRoutes = require("./Routes/paymentRoutes")
 // process.on("uncaughtException", (err) => {
 //     console.log(`Error is :${err}`)
 //     console.log(`Shutting Down the Server due to Unhandled Rejection in index.js`)
@@ -26,7 +27,7 @@ const corsOptions = {
 // console.log(object)
 dbConnection()
 // app.use(cors());
-app.use(express.json({ limit: "10mb" }))
+app.use(express.json({ limit: "10mb", verify: (req, res, buf) => { req.rawBody = buf.toString() } }))
 app.use(cookieParser())
 
 app.use(cors(corsOptions));
@@ -37,6 +38,7 @@ app.options('*', cors(corsOptions));
 app.use("/api/v1", productRoutes)
 app.use("/api/v1", UserRoutes)
 app.use("/api/v1", orderRoutes)
+app.use("/api/v1", paymentRoutes)
 
 app.use(ErrorMiddleware)
 // const port = 4000
