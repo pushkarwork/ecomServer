@@ -2,6 +2,7 @@ const CatchAsyncErrors = require("../Middlewares/CatchAsyncErrors");
 const productSchema = require("../Models/productModel");
 const ApiFilters = require("../Utils/ApiFilters");
 const ErrorHandler = require("../Utils/ErrorHandler")
+const Order = require("../Models/OrderModel")
 
 
 //Get all products = /api/v1/getALlProducts 
@@ -32,11 +33,11 @@ const createProduct = CatchAsyncErrors(async (req, res) => {
 // Get single product by ID = /api/v1/product/:id
 const getSingleProduct = CatchAsyncErrors(async (req, res, next) => {
 
-    const product = await productSchema.findById(req?.params?.id);
+    const product = await productSchema.findById(req?.params?.id).populate("reviews.user");
     if (!product) {
         return next(new ErrorHandler("Product Not Found", 404))
     }
-    res.status(200).json({product});
+    res.status(200).json({ product });
 
 });
 
@@ -78,7 +79,7 @@ const createReview = CatchAsyncErrors(async (req, res) => {
         return next(new ErrorHandler("product not found with this id ", 404))
     }
 
-    const isReviewed = product?.reviews?.find((r) => r.user.toString() === req.user._id)
+    const isReviewed = product?.reviews?.find((r) => r.user.toString() === req.user._id.toString())
 
     if (isReviewed) {
         product.reviews.forEach(review => {
@@ -146,4 +147,18 @@ const DeleteReview = CatchAsyncErrors(async (req, res) => {
 
 });
 
-module.exports = { getAllProducts, createProduct, getSingleProduct, updateProduct, deleteProduct, createReview, GetReviews, DeleteReview };
+//can  user review= /api/v1/can_review
+const canUserReview = CatchAsyncErrors(async (req, res, next) => {
+    const orders = await Order.find({
+        user: req.user._id,
+        "orderItems.product": req.query.productId
+    })
+
+    if (orders.length === 0) {
+        return res.status(200).json({ canReview: false })
+    }
+
+    res.status(200).json({ canReview: true })
+})
+
+module.exports = { getAllProducts, createProduct, canUserReview, getSingleProduct, updateProduct, deleteProduct, createReview, GetReviews, DeleteReview };

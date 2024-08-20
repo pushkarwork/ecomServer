@@ -5,6 +5,7 @@ const Order = require("../Models/OrderModel");
 
 
 const stripeCheckoutSession = CatchAsyncErrors(async (req, res, next) => {
+
     const body = req.body
     const shippingInfo = body.shippingInfo;
     const shipping_rate = body.itemsPrice >= 200 ? "shr_1PpDTMP51tOIoWAdPJGwK565" : "shr_1PpDTtP51tOIoWAd6qq2CQeZ"
@@ -23,27 +24,32 @@ const stripeCheckoutSession = CatchAsyncErrors(async (req, res, next) => {
             quantity: item.quantity
         }
     })
+
     // Await the session creation
     const session = await stripe.checkout.sessions.create({
         payment_method_types: ['card'],
         mode: 'payment',
-        success_url: `${process.env.FRONTEND_URL}/me/orders`,
+        success_url: `${process.env.FRONTEND_URL}/me/orders?order_success=true`,
         cancel_url: `${process.env.FRONTEND_URL}`,
-        customer_email: req.user.email,
+        customer_email: req?.user?.email,
         client_reference_id: req.user._id.toString(),
         metadata: { ...shippingInfo, itemsPrice: body.itemsPrice },
         shipping_options: [
             { shipping_rate },
         ],
         line_items,
-    });
+
+    },
+    );
+
     console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
-    // console.log("session is ", session)
+    console.log("session is ", session)
     console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
 
     res.status(200).json({
         url: session.url,
     });
+
 });
 
 
@@ -73,8 +79,9 @@ const getOrderItems = async (line_items) => {
     });
 }
 const stripeWebHook = CatchAsyncErrors(async (req, res, next) => {
+    // console.log("hi there from stripeWweb hook")
     try {
-        console.log("hi there from stripeWweb hook")
+
         const signature = req.headers['stripe-signature'];
         const event = stripe.webhooks.constructEvent(
             req.rawBody, signature, process.env.STRIPE_WEBHOOK_SECRET
@@ -118,4 +125,4 @@ const stripeWebHook = CatchAsyncErrors(async (req, res, next) => {
     }
 })
 
-module.exports = { stripeCheckoutSession, stripeWebHook };
+module.exports = { stripeCheckoutSession, stripeWebHook };  
