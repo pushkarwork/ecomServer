@@ -3,7 +3,7 @@ const productSchema = require("../Models/productModel");
 const ApiFilters = require("../Utils/ApiFilters");
 const ErrorHandler = require("../Utils/ErrorHandler")
 const Order = require("../Models/OrderModel")
-
+const { upload_file, delete_file } = require('../Utils/clooudinary');
 
 //Get all products = /api/v1/getALlProducts 
 const getAllProducts = CatchAsyncErrors(async (req, res, next) => {
@@ -42,6 +42,18 @@ const getSingleProduct = CatchAsyncErrors(async (req, res, next) => {
 });
 
 
+
+// Get ADMIN products  = /api/v1/admin/products
+const getAdminProducts = CatchAsyncErrors(async (req, res, next) => {
+
+    const products = await productSchema.find();
+
+    res.status(200).json({ products });
+
+});
+
+
+
 // Update single product by ID = /api/v1/product/:id
 const updateProduct = CatchAsyncErrors(async (req, res) => {
     let product = await productSchema.findById(req?.params?.id);
@@ -58,6 +70,10 @@ const deleteProduct = CatchAsyncErrors(async (req, res) => {
     let product = await productSchema.findById(req?.params?.id);
     if (!product) {
         return res.status(404).json({ message: "Product not found" });
+    }
+
+    for (let i = 0; i < product.images.length; i++) {
+        await delete_file(product?.images[i].public_id)
     }
     await product.deleteOne()
     res.status(200).json({ message: "Product Deleted Successfully" });
@@ -161,4 +177,50 @@ const canUserReview = CatchAsyncErrors(async (req, res, next) => {
     res.status(200).json({ canReview: true })
 })
 
-module.exports = { getAllProducts, createProduct, canUserReview, getSingleProduct, updateProduct, deleteProduct, createReview, GetReviews, DeleteReview };
+
+
+
+//Upload product images => api / vi / admin / products / id / upload_images
+const uploadProductImages = CatchAsyncErrors(async (req, res) => {
+
+    let product = await productSchema.findById(req?.params?.id);
+    // console.log("images are", req.body.images)
+    if (!product) {
+        return next(new ErrorHandler("Product Not Found", 404))
+    }
+    const uploader = async (image) => {
+        // console.log("Uploading image:", image);
+        return upload_file(image, "shopit/products");
+    };
+    // console.log("uploader is=>", uploader)
+    const urls = await Promise.all((req?.body?.images).map(uploader));
+    // console.log("Product is=>", urls)
+
+    product?.images.push(...urls)
+    await product?.save();
+    res.status(200).json({
+        product
+    })
+
+
+})
+
+//Delete product images => api / vi / admin / products / id / delete_image
+const DeleteProductImage = CatchAsyncErrors(async (req, res) => {
+    let product = await productSchema.findById(req?.params?.id);
+    if (!product) {
+        return next(new ErrorHandler("Product Not Found", 404));
+    }
+
+    const isDeleted = await delete_file(req.body.imgId);
+    if (isDeleted) {
+        product.images = product.images.filter((img) => img.public_id !== req.body.imgId);
+        await product.save();
+    }
+
+    res.status(200).json({
+        product
+    });
+});
+
+module.exports = { DeleteProductImage, uploadProductImages, getAllProducts, getAdminProducts, createProduct, canUserReview, getSingleProduct, updateProduct, deleteProduct, createReview, GetReviews, DeleteReview };
