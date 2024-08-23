@@ -123,7 +123,8 @@ const createReview = CatchAsyncErrors(async (req, res) => {
 
 const GetReviews = CatchAsyncErrors(async (req, res, next) => {
 
-    const product = await productSchema.findById(req.query.id)
+    const product = await productSchema.findById(req.query.id).populate("reviews.user")
+    // console.log("product is >??", product)
 
     if (!product) {
         return next(new ErrorHandler("Product not Found", 404))
@@ -140,6 +141,7 @@ const GetReviews = CatchAsyncErrors(async (req, res, next) => {
 const DeleteReview = CatchAsyncErrors(async (req, res) => {
 
     let product = await productSchema.findById(req.query.productId)
+    console.log(product)
 
     if (!product) {
         return next(new ErrorHandler("product not found with this id ", 404))

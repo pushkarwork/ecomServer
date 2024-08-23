@@ -139,7 +139,7 @@ const updatePassword = CatchAsyncErrors(async (req, res, next) => {
 
     const user = await UserModels.findById(req?.user?._id).select("+password");
     const Is_Matched_Password = await user.comparePassword(req.body.oldPassword)
-    console.log("here",Is_Matched_Password)
+    console.log("here", Is_Matched_Password)
 
     if (!Is_Matched_Password) {
         return next(new ErrorHandler("You have entered the wrong password , please check again", 400))
@@ -188,7 +188,9 @@ const getUserDetail = CatchAsyncErrors(async (req, res, next) => {
 //update user Profile(name or email or ROLE) --- api/v1/admin/updateuser
 
 const updateUser = CatchAsyncErrors(async (req, res, next) => {
+    // console.log("object")
     const updated_Data = { name: req.body.name, email: req.body.email, role: req.body.role }
+    // console.log(req.body.role)
 
     const user = await UserModels.findByIdAndUpdate(req.params.id, updated_Data, { new: true });
 
@@ -204,6 +206,10 @@ const deleteUser = CatchAsyncErrors(async (req, res, next) => {
     const user = await UserModels.findById(req.params.id);
     if (!user) {
         return next(new ErrorHandler("User not Found", 404))
+    }
+
+    if (user?.avatar?.public_id) {
+        await delete_file(user?.avatar?.public_id)
     }
 
     await user.deleteOne()
