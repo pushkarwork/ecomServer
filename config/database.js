@@ -4,7 +4,7 @@ const dotenv = require("dotenv");
 // Load environment variables
 dotenv.config({ path: "backend/config/config.env" });
 
-const DB_URI = process.env.DB_Local_URi;
+let DB_URI = process.env.DB_Local_URi;
 const dbConnection = () => {
     if (process.env.NODE_ENV === "PRODUCTION") {
         DB_URI = process.env.MAIN_URi

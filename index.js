@@ -3,13 +3,22 @@ const app = express()
 const cors = require('cors');
 var cookieParser = require('cookie-parser')
 const dotenv = require("dotenv")
-dotenv.config({ path: "backend/config/config.env" })
+
+
+if (process.env.NODE_ENV !== "PRODUCTION") {
+    dotenv.config({ path: "backend/config/config.env" })
+}
 const productRoutes = require("./Routes/ProductRoutes")
 const dbConnection = require("./config/database");
 const UserRoutes = require("./Routes/UserRoutes")
 const ErrorMiddleware = require("./Middlewares/Errors")
 const orderRoutes = require("./Routes/orderRoutes")
 const paymentRoutes = require("./Routes/paymentRoutes")
+
+const path = require("path");
+// const fileURLToPath = require("url");
+// const __filename = fileURLToPath(import.meta.url);
+// const __dirname = path.dirname(__filename);
 // process.on("uncaughtException", (err) => {
 //     console.log(`Error is :${err}`)
 //     console.log(`Shutting Down the Server due to Unhandled Rejection in index.js`)
@@ -39,6 +48,19 @@ app.use("/api/v1", productRoutes)
 app.use("/api/v1", UserRoutes)
 app.use("/api/v1", orderRoutes)
 app.use("/api/v1", paymentRoutes)
+// console.log("Current NODE_ENV:", process.env.NODE_ENV);
+// console.log("Current Directory:", __dirname);
+// console.log("Resolved Path:", path.join(__dirname, "../client/dist"));
+
+if (process.env.NODE_ENV === "PRODUCTION") {
+    console.log("object")
+    console.log(path.join(__dirname, "../client/dist", "HIHIHIH"));
+    app.use(express.static(path.join(__dirname, "../client/dist")))
+
+    app.get("*", (req, res) => {
+        res.sendFile(path.resolve(__dirname, "../client/dist/index.html"))
+    })
+}
 
 app.use(ErrorMiddleware)
 // const port = 4000
