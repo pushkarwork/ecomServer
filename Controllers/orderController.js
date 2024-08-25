@@ -72,12 +72,18 @@ const updateOrder = CatchAsyncErrors(async (req, res, next) => {
         product.stock = product.stock - item.quantity;
         await product.save({ validateBeforeSave: false });
     }
-    order.orderStatus = req.body.status;
-    order.deliveredAt = Date.now();
-    if (ProductNotFound) {
-        return next(new ErrorHandler("No product Found with one or more ID", 404))
-    }
+    // order.orderStatus = req.body.status;
+    // order.deliveredAt = Date.now();
+    // if (ProductNotFound) {
+    //     return next(new ErrorHandler("No product Found with one or more ID", 404))
+    // }
 
+
+    order.orderStatus = req.body.status;
+    if (req.body.status === "delivered") {
+        order.deliveredAt = Date.now();
+        order.paymentInfo.status = "paid"; // Set payment status to "paid"
+    }
     await order.save()
     res.status(200).json({
         success: true

@@ -14,7 +14,11 @@ const createUser = CatchAsyncErrors(async (req, res, next) => {
     const user = await UserModels.create({
         name, email, password
     })
-    sendToken(user, 201, res)
+    // sendToken(user, 201, res)
+    res.status(201).json({
+        success: true,
+        message: "User registered successfully"
+    });
 })
 
 //Login User
@@ -31,7 +35,7 @@ const loginUser = CatchAsyncErrors(async (req, res, next) => {
     const user = await UserModels.findOne({ email }).select('+password');
 
     if (!user) {
-        return next(new ErrorHandler("Please enter correct email or password", 401))
+        return next(new ErrorHandler("User with this email does not exist, Please create an account", 401))
     }
 
     // Check if the password is correct

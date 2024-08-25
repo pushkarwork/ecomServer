@@ -6,6 +6,7 @@ cloudinary.config({
     api_key: process.env.CLOUDINARY_API_KEY,
     api_secret: process.env.CLOUDINARY_API_SECRET,
 });
+// console.log("here in cloud",process.env.CLOUDINARY_API_KEY)
 
 const upload_file = (file, folder) => {
     return new Promise((resolve, reject) => {
