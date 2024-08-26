@@ -27,7 +27,7 @@ const path = require("path");
 // })
 
 const corsOptions = {
-    origin: 'http://localhost:5173', // Exact match for your frontend's origin
+    origin: 'https://ecomfrontend-3l60.onrender.com', // Exact match for your frontend's origin
     credentials: true, // Ensure this is set to true
     optionsSuccessStatus: 200, // For older browsers compatibility
 };
