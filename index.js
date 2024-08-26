@@ -6,20 +6,20 @@ const dotenv = require("dotenv")
 dotenv.config({ path: "config/config.env" })
 
 // if (process.env.NODE_ENV !== "PRODUCTION") {
-    //     dotenv.config({ path: "backend/config/config.env" })
-    // }
-    const productRoutes = require("./Routes/ProductRoutes")
-    const dbConnection = require("./config/database");
-    const UserRoutes = require("./Routes/UserRoutes")
-    const ErrorMiddleware = require("./Middlewares/Errors")
-    const orderRoutes = require("./Routes/orderRoutes")
-    const paymentRoutes = require("./Routes/paymentRoutes")
-    
-    const path = require("path");
-    // const fileURLToPath = require("url");
-    // const __filename = fileURLToPath(import.meta.url);
-    // const __dirname = path.dirname(__filename);
-    // process.on("uncaughtException", (err) => {
+//     dotenv.config({ path: "backend/config/config.env" })
+// }
+const productRoutes = require("./Routes/ProductRoutes")
+const dbConnection = require("./config/database");
+const UserRoutes = require("./Routes/UserRoutes")
+const ErrorMiddleware = require("./Middlewares/Errors")
+const orderRoutes = require("./Routes/orderRoutes")
+const paymentRoutes = require("./Routes/paymentRoutes")
+
+const path = require("path");
+// const fileURLToPath = require("url");
+// const __filename = fileURLToPath(import.meta.url);
+// const __dirname = path.dirname(__filename);
+// process.on("uncaughtException", (err) => {
 //     console.log(`Error is :${err}`)
 //     console.log(`Shutting Down the Server due to Unhandled Rejection in index.js`)
 
