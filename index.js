@@ -19,7 +19,7 @@ const path = require("path");
 
 
 const corsOptions = {
-    origin: 'https://ecomfrontend-3l60.onrender.com', // Exact match for your frontend's origin
+    origin:true, // Exact match for your frontend's origin
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true, // Ensure this is set to true
