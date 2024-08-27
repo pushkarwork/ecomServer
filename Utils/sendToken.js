@@ -6,7 +6,7 @@ module.exports = (user, statusCode, res) => {
             Date.now() + process.env.COOKIE_EXPIRE_TIME * 24 * 60 * 60 * 1000
         ),
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production', 
+        secure: process.env.NODE_ENV === 'PRODUCTION', 
         sameSite: 'None'
         // secure: false
     }
