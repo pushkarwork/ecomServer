@@ -11,6 +11,6 @@ module.exports = (user, statusCode, res) => {
         // secure: false
     }
     console.log("here in sendTOken",token)
-    res.status(statusCode).cookie("token", token, options).json({ token })
-        console.log("here in sendTOken",token,cookie)
+    res.status(statusCode).json({ token })
+       
 }
