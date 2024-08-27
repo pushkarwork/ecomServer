@@ -42,6 +42,7 @@ app.use(cookieParser())
 // Log the cookies on every request
 app.use((req, res, next) => {
     console.log('Cookies:', req.cookies);
+    console.log('Headers:', req.headers);
     next();
 });
 app.use(cors(corsOptions));
