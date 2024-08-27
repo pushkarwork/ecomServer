@@ -8,7 +8,7 @@ module.exports = (user, statusCode, res) => {
         httpOnly: true,
         secure: true, // Enable this if your site is served over HTTPS
         sameSite: 'none', // Allow cross-origin cookies
-        domain: 'https://ecomserver-g20m.onrender.com', // Set domain for cross-subdomain cookies
+        domain: 'https://ecomfrontend-3l60.onrender.com', // Set domain for cross-subdomain cookies
        
     };
     console.log("here in sendTOken",token)
