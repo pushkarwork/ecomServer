@@ -16,18 +16,12 @@ const orderRoutes = require("./Routes/orderRoutes")
 const paymentRoutes = require("./Routes/paymentRoutes")
 
 const path = require("path");
-// const fileURLToPath = require("url");
-// const __filename = fileURLToPath(import.meta.url);
-// const __dirname = path.dirname(__filename);
-// process.on("uncaughtException", (err) => {
-//     console.log(`Error is :${err}`)
-//     console.log(`Shutting Down the Server due to Unhandled Rejection in index.js`)
 
-//     process.exit(1)
-// })
 
 const corsOptions = {
     origin: 'https://ecomfrontend-3l60.onrender.com', // Exact match for your frontend's origin
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true, // Ensure this is set to true
     optionsSuccessStatus: 200, // For older browsers compatibility
 };
