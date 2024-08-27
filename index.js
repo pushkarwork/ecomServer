@@ -39,6 +39,11 @@ dbConnection()
 app.use(express.json({ limit: "10mb", verify: (req, res, buf) => { req.rawBody = buf.toString() } }))
 app.use(cookieParser())
 
+// Log the cookies on every request
+app.use((req, res, next) => {
+    console.log('Cookies:', req.cookies);
+    next();
+});
 app.use(cors(corsOptions));
 // Handle preflight requests for all routes
 app.options('*', cors(corsOptions));
