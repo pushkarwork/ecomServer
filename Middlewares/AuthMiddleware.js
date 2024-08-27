@@ -5,6 +5,7 @@ const jwt = require("jsonwebtoken")
 
 const isAuthenticated_User = CatchAsyncErrors(async (req, res, next) => {
     const { token } = req.cookies
+    console.log("here i am in middleware",token);
     if (!token) {
         return next(new ErrorHandler("Please login to access this resource", 401))
     }
